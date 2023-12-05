@@ -89,4 +89,11 @@ public class Character {
         this.isMoving = false;
         // this.currentXVelocity = 0;
     }
+
+    public boolean checkGameOver() {
+        if (y > GameView.screenY) {
+            return true;
+        }
+        return false;
+    }
 }

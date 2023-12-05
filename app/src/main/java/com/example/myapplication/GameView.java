@@ -43,6 +43,17 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         character.update();
+
+        if (isPlaying && checkGameOver()) {
+            isPlaying = false;
+        }
+    }
+
+    private boolean checkGameOver() {
+        if (character.checkGameOver()) {
+            return true;
+        }
+        return false;
     }
 
     private void draw() {
