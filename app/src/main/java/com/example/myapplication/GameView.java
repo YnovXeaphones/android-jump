@@ -90,6 +90,10 @@ public class GameView extends SurfaceView implements Runnable {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 character.jump();
+                character.move(event.getX(), screenX);
+                break;
+            case MotionEvent.ACTION_UP:
+                character.stopMoving();
                 break;
         }
         return true;
