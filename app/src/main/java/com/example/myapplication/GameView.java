@@ -13,7 +13,7 @@ import android.widget.ImageView;
 public class GameView extends SurfaceView implements Runnable {
     private Thread thread;
     private boolean isPlaying;
-    private int screenX, screenY;
+    public static int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
     private Character character;
@@ -24,14 +24,8 @@ public class GameView extends SurfaceView implements Runnable {
         this.screenX = screenX;
         this.screenY = screenY;
 
-        System.out.println("screenX: " + screenX);
-        System.out.println("screenY: " + screenY);
-
         screenRatioX = 1080f / screenX;
         screenRatioY = 1920f / screenY;
-
-        System.out.println("screenRatioX: " + screenRatioX);
-        System.out.println("screenRatioY: " + screenRatioY);
 
         character = new Character(screenY, screenX, getResources());
 

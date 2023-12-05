@@ -50,6 +50,14 @@ public class Character {
 
         y += currentYVelocity;
         x += currentXVelocity;
+
+        // if the character is at the left edge of the screen, move it back to the right edge
+        if (x + width < 0) {
+            x = GameView.screenX;
+        }
+        if (x > GameView.screenX) {
+            x = -width;
+        }
     }
 
     public Bitmap getCharacterSprite() {
