@@ -3,8 +3,7 @@ package com.example.myapplication;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import java.util.List;
+import android.graphics.RectF;
 
 public class Character {
     private float jumpForce = -40;
@@ -15,12 +14,11 @@ public class Character {
     private float currentXVelocity = 0;
     private boolean isMoving = false;
     int x, y, width, height;
+    RectF hitbox;
     private Bitmap characterSprite;
-    private List<Platform> platforms;
     private boolean canJump = true;
 
-    public Character(int screenY, int screenX, Resources res, List<Platform> platforms) {
-        this.platforms = platforms;
+    public Character(int screenY, int screenX, Resources res) {
         this.characterSprite = BitmapFactory.decodeResource(res, R.drawable.android_idle);
 
         width = characterSprite.getWidth();
@@ -34,23 +32,20 @@ public class Character {
 
         characterSprite = Bitmap.createScaledBitmap(characterSprite, width, height, false);
 
+        hitbox = new RectF(x, y, x + width, y + height);
+
         y = screenY / 2;
         x = (screenX / 2) - (width / 2);
     }
 
     public void jump() {
-        if (isOnPlatform() && canJump) {
+        if (canJump) {
             currentYVelocity = jumpForce;
             canJump = false;
         }
     }
 
     private boolean isOnPlatform() {
-        for (Platform platform : platforms) {
-            if (collidesWith(platform)) {
-                return true;
-            }
-        }
         return false;
     }
 
@@ -58,13 +53,12 @@ public class Character {
         this.canJump = canJump;
     }
 
-    public void setPlatforms(List<Platform> platforms) {
-        this.platforms = platforms;
-    }
-
-
     public void update() {
         currentYVelocity += gravity;
+
+        if (currentYVelocity > gravity * 15) {
+            setCanJump(true);
+        }
 
         if (!isMoving) {
             if (currentXVelocity > 0) {
@@ -84,6 +78,8 @@ public class Character {
         if (x > GameView.screenX) {
             x = -width;
         }
+
+        this.hitbox.set(x, y, x + width, y + height);
     }
 
     public Bitmap getCharacterSprite() {
@@ -113,26 +109,17 @@ public class Character {
 
     public void stopMoving() {
         this.isMoving = false;
-        // this.currentXVelocity = 0;
-    }
-
-    public boolean collidesWith(Platform platform) {
-        float characterBottom = y + height;
-        float characterRight = x + width;
-
-        float platformTop = platform.y;
-        float platformBottom = platform.y + platform.height;
-        float platformLeft = platform.x;
-        float platformRight = platform.x + platform.width;
-
-        boolean topCollision = characterBottom >= platformTop && characterBottom <= platformTop + 5;
-        boolean bottomCollision = characterBottom >= platformBottom && characterBottom <= platformBottom + 5;
-        boolean sideCollision = characterRight >= platformLeft && x <= platformRight;
-
-        return (topCollision || bottomCollision) && sideCollision;
     }
 
     public void setYVelocity(float yVelocity) {
         this.currentYVelocity = yVelocity;
+    }
+
+    public RectF getHitbox() {
+        return hitbox;
+    }
+
+    public int getVelocityY() {
+        return (int) currentYVelocity;
     }
 }
