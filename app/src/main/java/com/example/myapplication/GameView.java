@@ -4,19 +4,22 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameView extends SurfaceView implements Runnable {
+
     private Thread thread;
     private boolean isPlaying;
     public static int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
     private Character character;
+    private List<Platform> platforms;
+    private static final float GRAVITY = 1.5f;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
@@ -27,7 +30,15 @@ public class GameView extends SurfaceView implements Runnable {
         screenRatioX = 1080f / screenX;
         screenRatioY = 1920f / screenY;
 
-        character = new Character(screenY, screenX, getResources());
+        platforms = new ArrayList<>();
+
+        int platformCount = 6;
+        float gap = screenY / platformCount;
+        for (int i = 1; i < 6; i++) {
+            platforms.add(new Platform((float) Math.random() * screenX, screenY - i * gap));
+        }
+
+        character = new Character(screenY, screenX, getResources(), platforms);
 
         paint = new Paint();
     }
@@ -42,7 +53,24 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
+        character.setPlatforms(platforms);
         character.update();
+
+        for (Platform platform : platforms) {
+            if (character.collidesWith(platform)) {
+                if (character.y + character.height <= platform.y + 5) {
+                    character.jump();
+                } else {
+                    if (character.y >= platform.y + platform.height) {
+                        character.setYVelocity(GRAVITY);
+                    } else {
+                        character.jump();
+                    }
+                }
+                character.setCanJump(true);
+            }
+        }
+
     }
 
     private void draw() {
@@ -50,6 +78,10 @@ public class GameView extends SurfaceView implements Runnable {
             Canvas canvas = getHolder().lockCanvas();
 
             canvas.drawColor(Color.WHITE);
+
+            for (Platform platform : platforms) {
+                platform.draw(canvas, paint);
+            }
 
             canvas.drawBitmap(character.getCharacterSprite(), character.x, character.y, paint);
 
@@ -83,7 +115,6 @@ public class GameView extends SurfaceView implements Runnable {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                character.jump();
                 character.move(event.getX(), screenX);
                 break;
             case MotionEvent.ACTION_UP:
