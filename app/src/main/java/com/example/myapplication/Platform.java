@@ -25,5 +25,11 @@ public class Platform {
     public RectF getHitbox() {
         return hitbox;
     }
+
+    public void update(float screenYPosition) {
+        y += screenYPosition;
+
+        hitbox.set(x, y, x + width, y + height);
+    }
 }
 
