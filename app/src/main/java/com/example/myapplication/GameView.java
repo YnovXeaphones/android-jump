@@ -15,7 +15,7 @@ import java.util.List;
 public class GameView extends SurfaceView implements Runnable {
 
     private static final String TAG = "GameView";
-    private static final Boolean DEBUG = false;
+    public static final Boolean DEBUG = false;
 
     private Thread thread;
     private boolean isPlaying;
@@ -27,6 +27,7 @@ public class GameView extends SurfaceView implements Runnable {
     private float cameraY = 0;
     private int maxPlatformCount = 15;
     private int platformCount = 15;
+    private int score = 0;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
@@ -80,6 +81,11 @@ public class GameView extends SurfaceView implements Runnable {
                     character.jump();
                 }
             }
+
+            if (platform.scoreHitbox.intersect(character.getHitbox()) && !platform.isScored && character.getVelocityY() < 0) {
+                score++;
+                platform.isScored = true;
+            }
         }
     }
 
@@ -117,8 +123,20 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawRect(character.getHitbox(), paint);
             }
 
+            drawScore(canvas, score);
+
             getHolder().unlockCanvasAndPost(canvas);
         }
+    }
+
+    private void drawScore(Canvas canvas, int score) {
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(200);
+
+        String scoreString = score + "";
+
+        // Draw text at the top-center of the canvas
+        canvas.drawText(scoreString, canvas.getWidth() / 2f - scoreString.length() * 20, 200, paint);
     }
 
     private void sleep() {
