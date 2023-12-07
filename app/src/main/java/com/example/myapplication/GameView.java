@@ -20,6 +20,8 @@ public class GameView extends SurfaceView implements Runnable {
     private Paint paint;
     private Character character;
     private List<Platform> platforms;
+    private float screenYPosition = 0;
+    private int platformCount = 10;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
@@ -32,7 +34,6 @@ public class GameView extends SurfaceView implements Runnable {
 
         platforms = new ArrayList<>();
 
-        int platformCount = 10;
         float gap = screenY / platformCount;
         for (int i = 1; i < platformCount; i++) {
             platforms.add(new Platform((float) Math.random() * screenX, screenY - i * gap));
@@ -54,7 +55,10 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         character.update();
+        //screenYPosition = screenY / 2 - character.y;
+        //character.y += screenYPosition;
 
+        //generatePlatforms();
         for (Platform platform : platforms) {
             if (character.getHitbox().intersect(platform.getHitbox())) {
                 if (character.getHitbox().bottom >= platform.getHitbox().top && character.getVelocityY() > 0) {
@@ -62,9 +66,36 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
-
+        adjustPlatforms();
+        removeOffscreenPlatforms();
     }
 
+    private void generatePlatforms() {
+        // Ajoutez de nouvelles plateformes en fonction de la position verticale de l'écran
+        if (character.y < platforms.get(platforms.size() - 1).y + 200) {
+            float gap = screenY / platformCount;
+            platforms.add(new Platform((float) Math.random() * screenX, platforms.get(platforms.size() - 1).y - gap));
+            platformCount++;
+        }
+    }
+
+    private void adjustPlatforms() {
+        // Ajustement de la position y des plates-formes en fonction de la nouvelle position de l'écran
+        for (Platform platform : platforms) {
+            platform.y += screenYPosition;
+        }
+    }
+
+    private void removeOffscreenPlatforms() {
+        // Supprimez les plateformes qui ne sont plus sur l'écran
+        for (int i = 0; i < platforms.size(); i++) {
+            Platform platform = platforms.get(i);
+            if (platform.y + platform.height < screenYPosition) {
+                platforms.remove(i);
+                i--; // Décrémentez i pour éviter de sauter la plateforme suivante après la suppression
+            }
+        }
+    }
     private void draw() {
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();

@@ -19,6 +19,10 @@ public class Character {
     private boolean canJump = true;
 
     public Character(int screenY, int screenX, Resources res) {
+
+        y = screenY / 2;
+        x = (screenX / 2) - (width / 2);
+
         this.characterSprite = BitmapFactory.decodeResource(res, R.drawable.android_idle);
 
         width = characterSprite.getWidth();
@@ -33,9 +37,6 @@ public class Character {
         characterSprite = Bitmap.createScaledBitmap(characterSprite, width, height, false);
 
         hitbox = new RectF(x, y, x + width, y + height);
-
-        y = screenY / 2;
-        x = (screenX / 2) - (width / 2);
     }
 
     public void jump() {
