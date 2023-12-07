@@ -20,6 +20,7 @@ public class GameView extends SurfaceView implements Runnable {
     private Paint paint;
     private Character character;
     private List<Platform> platforms;
+    private Background background1, background2;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
@@ -39,6 +40,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         character = new Character(screenY, screenX, getResources());
+
+        background1 = new Background(screenX, screenY, getResources());
+        background2 = new Background(screenX, screenY, getResources());
+        background2.x = screenX;
 
         paint = new Paint();
     }
@@ -63,13 +68,22 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
+        if (background1.x + background1.background.getHeight() < 0) {
+            background1.y = screenY;
+        }
+
+        if (background2.y + background2.background.getHeight() < 0) {
+            background2.y = screenY;
+        }
+
     }
 
     private void draw() {
         if (getHolder().getSurface().isValid()) {
             Canvas canvas = getHolder().lockCanvas();
 
-            canvas.drawColor(Color.WHITE);
+            canvas.drawBitmap(background1.background, background1.x, background1.y, paint);
+            canvas.drawBitmap(background2.background, background2.x, background2.y, paint);
 
             for (Platform platform : platforms) {
                 platform.draw(canvas, paint);
