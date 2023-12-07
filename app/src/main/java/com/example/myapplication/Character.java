@@ -89,7 +89,7 @@ public class Character {
 
     public void move(float touchX, float screenX) {
         float middleOfScreen = screenX / 2;
-        float offset = 100;
+        float offset = 0;
 
         this.isMoving = true;
 
