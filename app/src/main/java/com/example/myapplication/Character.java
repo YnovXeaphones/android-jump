@@ -54,7 +54,7 @@ public class Character {
         this.canJump = canJump;
     }
 
-    public void update() {
+    public void update(float cameraY) {
         currentYVelocity += gravity;
 
         if (currentYVelocity > gravity * 15) {
@@ -70,6 +70,7 @@ public class Character {
         }
 
         y += currentYVelocity;
+        y += cameraY;
         x += currentXVelocity;
 
         // if the character is at the left edge of the screen, move it back to the right edge

@@ -56,7 +56,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        character.update();
+        character.update(cameraY);
 
         Log.d("TAG", "character.y: " + character.y + " screenY / 2: " + screenY / 2);
 
@@ -69,9 +69,7 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
-
-        character.y += cameraY;
-
+        removeOffscreenPlatforms();
         generatePlatforms();
         for (Platform platform : platforms) {
             platform.update(cameraY);
@@ -81,8 +79,6 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
-
-        removeOffscreenPlatforms();
     }
 
     private void generatePlatforms() {
