@@ -69,8 +69,7 @@ public class Character {
             }
         }
 
-        y += currentYVelocity;
-        y += cameraY;
+        y += currentYVelocity + cameraY;
         x += currentXVelocity;
 
         // if the character is at the left edge of the screen, move it back to the right edge

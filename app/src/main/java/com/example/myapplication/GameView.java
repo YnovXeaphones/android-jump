@@ -14,6 +14,9 @@ import java.util.List;
 
 public class GameView extends SurfaceView implements Runnable {
 
+    private static final String TAG = "GameView";
+    private static final Boolean DEBUG = false;
+
     private Thread thread;
     private boolean isPlaying;
     public static int screenX, screenY;
@@ -22,8 +25,8 @@ public class GameView extends SurfaceView implements Runnable {
     private Character character;
     private List<Platform> platforms;
     private float cameraY = 0;
-
-    private int platformCount = 10;
+    private int maxPlatformCount = 15;
+    private int platformCount = 15;
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
@@ -56,10 +59,6 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        character.update(cameraY);
-
-        Log.d("TAG", "character.y: " + character.y + " screenY / 2: " + screenY / 2);
-
         if (character.y < screenY / 2 && character.getVelocityY() < 0) {
             cameraY += -character.getVelocityY();
         } else if (cameraY > 0) {
@@ -71,6 +70,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         removeOffscreenPlatforms();
         generatePlatforms();
+
+        character.update(cameraY);
+
         for (Platform platform : platforms) {
             platform.update(cameraY);
             if (character.getHitbox().intersect(platform.getHitbox())) {
@@ -82,8 +84,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void generatePlatforms() {
-        // Ajoutez de nouvelles plateformes en fonction de la position verticale de l'écran
-        if (character.y < platforms.get(platforms.size() - 1).y + 200) {
+        if (platformCount < maxPlatformCount) {
             float gap = screenY / platformCount;
             platforms.add(new Platform((float) Math.random() * screenX, platforms.get(platforms.size() - 1).y - gap));
             platformCount++;
@@ -91,12 +92,11 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void removeOffscreenPlatforms() {
-        // Supprimez les plateformes qui ne sont plus sur l'écran
-        for (int i = 0; i < platforms.size(); i++) {
-            Platform platform = platforms.get(i);
-            if (platform.y + platform.height < cameraY) {
-                platforms.remove(i);
-                i--; // Décrémentez i pour éviter de sauter la plateforme suivante après la suppression
+        for (Platform platform : platforms) {
+            if (platform.y > screenY) {
+                platforms.remove(platform);
+                platformCount--;
+                break;
             }
         }
     }
@@ -111,6 +111,11 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             canvas.drawBitmap(character.getCharacterSprite(), character.x, character.y, paint);
+
+            if (DEBUG) {
+                paint.setColor(Color.rgb(255, 0, 0));
+                canvas.drawRect(character.getHitbox(), paint);
+            }
 
             getHolder().unlockCanvasAndPost(canvas);
         }
