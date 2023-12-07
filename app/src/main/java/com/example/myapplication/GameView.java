@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -20,7 +21,8 @@ public class GameView extends SurfaceView implements Runnable {
     private Paint paint;
     private Character character;
     private List<Platform> platforms;
-    private float screenYPosition = 0;
+    private float cameraY = 0;
+
     private int platformCount = 10;
 
     public GameView(Context context, int screenX, int screenY) {
@@ -55,18 +57,31 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
         character.update();
-        //screenYPosition = screenY / 2 - character.y;
-        //character.y += screenYPosition;
 
-        //generatePlatforms();
+        Log.d("TAG", "character.y: " + character.y + " screenY / 2: " + screenY / 2);
+
+        if (character.y < screenY / 2 && character.getVelocityY() < 0) {
+            cameraY += -character.getVelocityY();
+        } else if (cameraY > 0) {
+            cameraY -= character.gravity * 2;
+            if (cameraY < 0) {
+                cameraY = 0;
+            }
+        }
+
+
+        character.y += cameraY;
+
+        generatePlatforms();
         for (Platform platform : platforms) {
+            platform.update(cameraY);
             if (character.getHitbox().intersect(platform.getHitbox())) {
                 if (character.getHitbox().bottom >= platform.getHitbox().top && character.getVelocityY() > 0) {
                     character.jump();
                 }
             }
         }
-        adjustPlatforms();
+
         removeOffscreenPlatforms();
     }
 
@@ -79,18 +94,11 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void adjustPlatforms() {
-        // Ajustement de la position y des plates-formes en fonction de la nouvelle position de l'écran
-        for (Platform platform : platforms) {
-            platform.y += screenYPosition;
-        }
-    }
-
     private void removeOffscreenPlatforms() {
         // Supprimez les plateformes qui ne sont plus sur l'écran
         for (int i = 0; i < platforms.size(); i++) {
             Platform platform = platforms.get(i);
-            if (platform.y + platform.height < screenYPosition) {
+            if (platform.y + platform.height < cameraY) {
                 platforms.remove(i);
                 i--; // Décrémentez i pour éviter de sauter la plateforme suivante après la suppression
             }

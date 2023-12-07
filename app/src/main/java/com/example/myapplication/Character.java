@@ -7,7 +7,7 @@ import android.graphics.RectF;
 
 public class Character {
     private float jumpForce = -40;
-    private float gravity = 1.5f;
+    static final float gravity = 1.5f;
     private float movementSpeed = 20;
     private float movementSlowdown = 0.75f;
     private float currentYVelocity = 0;
