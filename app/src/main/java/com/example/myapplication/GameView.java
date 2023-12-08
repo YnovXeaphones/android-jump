@@ -140,7 +140,7 @@ public class GameView extends SurfaceView implements Runnable {
         editor.putString("username", usernameEditText.getText().toString());
         editor.apply();
 
-        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "database-name").build();
+        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "android-jump").build();
         db.scoreDao().insertScore(new Score(
                 usernameEditText.getText().toString(),
                 score,
