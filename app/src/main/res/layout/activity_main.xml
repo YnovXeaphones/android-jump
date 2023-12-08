@@ -6,48 +6,63 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:text="Android Jump"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.52" />
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/brouillon2"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="-349dp" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginBottom="100dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.19999999">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/playButton"
-            android:layout_width="176dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Button" />
-
-        <Button
-            android:id="@+id/button4"
+        <ImageButton
+            android:id="@+id/play"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Button" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:onClick="onImageClick"
+            android:src="@drawable/play"
+            android:scaleType="centerCrop"/>
 
-        <Button
-            android:id="@+id/button5"
+        <ImageButton
+            android:id="@+id/score"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Button" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:onClick="onImageClick"
+            android:src="@drawable/score"
+            android:scaleType="centerCrop"/>
+
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:onClick="onImageClick"
+            android:src="@drawable/settings"
+            android:scaleType="centerCrop"/>
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
