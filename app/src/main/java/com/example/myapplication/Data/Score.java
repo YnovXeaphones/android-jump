@@ -23,4 +23,24 @@ public class Score {
         this.score = score;
         this.date = date;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public Long getDate() {
+        return date;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }
