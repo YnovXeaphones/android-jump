@@ -1,13 +1,26 @@
 package com.example.myapplication;
 
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import androidx.room.Room;
+
+import com.example.myapplication.Data.AppDatabase;
+import com.example.myapplication.Data.Score;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +30,10 @@ public class GameView extends SurfaceView implements Runnable {
     private static final String TAG = "GameView";
     public static final Boolean DEBUG = false;
 
+    private Context context;
     private Thread thread;
     private boolean isPlaying;
+    private boolean gameOver = false;
     public static int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
@@ -32,6 +47,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     public GameView(Context context, int screenX, int screenY) {
         super(context);
+        this.context = context;
 
         this.screenX = screenX;
         this.screenY = screenY;
@@ -55,14 +71,105 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
-        while (isPlaying) {
+        while (isPlaying && !gameOver) {
             update();
             draw();
             sleep();
         }
+        int tick = 0;
+        while (isPlaying && gameOver) {
+            gameOverUpdate(tick);
+            draw();
+            tick++;
+            sleep();
+        }
+        if (!isPlaying && gameOver) {
+            displayGameOverScreen();
+        }
+    }
+
+    private void displayGameOverScreen() {
+        ((Activity) context).runOnUiThread(() -> {
+            ((Activity) context).setContentView(R.layout.activity_game_over_screen);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+            int fadeDuration = 1000;
+
+            TextView[] textViews = new TextView[4];
+            textViews[0] = ((Activity) context).findViewById(R.id.titleText);
+            textViews[1] = ((Activity) context).findViewById(R.id.scoreText);
+            textViews[2] = ((Activity) context).findViewById(R.id.highScoreText);
+            textViews[3] = ((Activity) context).findViewById(R.id.usernameText);
+
+            Button[] buttons = new Button[2];
+            buttons[0] = ((Activity) context).findViewById(R.id.restartButton);
+            buttons[1] = ((Activity) context).findViewById(R.id.menuButton);
+
+            EditText usernameEditText = ((Activity) context).findViewById(R.id.usernameInput);
+
+            textViews[1].setText("Your score is: " + score);
+            textViews[2].setText("Your best score is: " + score);
+            usernameEditText.setText(prefs.getString("username", ""));
+
+            buttons[0].setOnClickListener((view) -> {
+                saveScore(prefs, usernameEditText, score);
+                ((Activity) context).startActivity(GameActivity.getIntent((this.context)));
+                ((Activity) context).finish();
+            });
+
+            buttons[1].setOnClickListener((view) -> {
+                saveScore(prefs, usernameEditText, score);
+                ((Activity) context).startActivity(MainActivity.getIntent(context));
+                ((Activity) context).finish();
+            });
+
+            for (TextView textView : textViews) {
+                ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f)
+                        .setDuration(fadeDuration).start();
+            }
+            for (Button button : buttons) {
+                ObjectAnimator.ofFloat(button, "alpha", 0f, 1f)
+                        .setDuration(fadeDuration).start();
+            }
+            ObjectAnimator.ofFloat(usernameEditText, "alpha", 0f, 1f)
+                    .setDuration(fadeDuration).start();
+        });
+    }
+
+    private  void saveScore(SharedPreferences prefs, EditText usernameEditText, int score){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("username", usernameEditText.getText().toString());
+        editor.apply();
+
+        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "android-jump").build();
+        db.scoreDao().insertScore(new Score(
+                usernameEditText.getText().toString(),
+                score,
+                System.currentTimeMillis()
+        ));
+
+    }
+
+    private void gameOverUpdate(int tick) {
+        if (character.y - 100 > screenY && tick > 20) {
+            isPlaying = false;
+        }
+
+        if (tick < 18) {
+            cameraY = character.gravity * 200;
+        } else {
+            cameraY = 0;
+        }
+        character.update(-cameraY);
+        for (Platform platform : platforms) {
+            platform.update(-cameraY);
+        }
     }
 
     private void update() {
+        if (isPlaying && checkGameOver()) {
+            gameOver = true;
+        }
+
         if (character.y < screenY / 2 && character.getVelocityY() < 0) {
             cameraY += -character.getVelocityY();
         } else if (cameraY > 0) {
@@ -100,6 +207,13 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    private boolean checkGameOver() {
+        if (character.checkGameOver()) {
+            return true;
+        }
+        return false;
+    }
+
     private void removeOffscreenPlatforms() {
         for (Platform platform : platforms) {
             if (platform.y > screenY) {
@@ -126,7 +240,9 @@ public class GameView extends SurfaceView implements Runnable {
                 canvas.drawRect(character.getHitbox(), paint);
             }
 
-            drawScore(canvas, score);
+            if (!gameOver) {
+                drawScore(canvas, score);
+            }
 
             getHolder().unlockCanvasAndPost(canvas);
         }

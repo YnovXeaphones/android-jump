@@ -46,10 +46,6 @@ public class Character {
         }
     }
 
-    private boolean isOnPlatform() {
-        return false;
-    }
-
     public void setCanJump(boolean canJump) {
         this.canJump = canJump;
     }
@@ -122,5 +118,12 @@ public class Character {
 
     public int getVelocityY() {
         return (int) currentYVelocity;
+    }
+
+    public boolean checkGameOver() {
+        if (y > GameView.screenY) {
+            return true;
+        }
+        return false;
     }
 }
