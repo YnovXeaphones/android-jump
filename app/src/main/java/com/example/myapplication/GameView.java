@@ -17,6 +17,11 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.room.Room;
+
+import com.example.myapplication.Data.AppDatabase;
+import com.example.myapplication.Data.Score;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,6 +139,14 @@ public class GameView extends SurfaceView implements Runnable {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("username", usernameEditText.getText().toString());
         editor.apply();
+
+        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "database-name").build();
+        db.scoreDao().insertScore(new Score(
+                usernameEditText.getText().toString(),
+                score,
+                System.currentTimeMillis()
+        ));
+
     }
 
     private void gameOverUpdate(int tick) {
