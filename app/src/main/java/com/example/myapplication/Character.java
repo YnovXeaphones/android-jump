@@ -7,7 +7,7 @@ import android.graphics.RectF;
 
 public class Character {
     private float jumpForce = -40;
-    private float gravity = 1.5f;
+    static final float gravity = 1.5f;
     private float movementSpeed = 20;
     private float movementSlowdown = 0.75f;
     private float currentYVelocity = 0;
@@ -19,6 +19,10 @@ public class Character {
     private boolean canJump = true;
 
     public Character(int screenY, int screenX, Resources res) {
+
+        y = screenY / 2;
+        x = (screenX / 2) - (width / 2);
+
         this.characterSprite = BitmapFactory.decodeResource(res, R.drawable.android_idle);
 
         width = characterSprite.getWidth();
@@ -33,9 +37,6 @@ public class Character {
         characterSprite = Bitmap.createScaledBitmap(characterSprite, width, height, false);
 
         hitbox = new RectF(x, y, x + width, y + height);
-
-        y = screenY / 2;
-        x = (screenX / 2) - (width / 2);
     }
 
     public void jump() {
@@ -45,15 +46,11 @@ public class Character {
         }
     }
 
-    private boolean isOnPlatform() {
-        return false;
-    }
-
     public void setCanJump(boolean canJump) {
         this.canJump = canJump;
     }
 
-    public void update() {
+    public void update(float cameraY) {
         currentYVelocity += gravity;
 
         if (currentYVelocity > gravity * 15) {
@@ -68,7 +65,7 @@ public class Character {
             }
         }
 
-        y += currentYVelocity;
+        y += currentYVelocity + cameraY;
         x += currentXVelocity;
 
         // if the character is at the left edge of the screen, move it back to the right edge
@@ -88,7 +85,7 @@ public class Character {
 
     public void move(float touchX, float screenX) {
         float middleOfScreen = screenX / 2;
-        float offset = 100;
+        float offset = 0;
 
         this.isMoving = true;
 
@@ -121,5 +118,12 @@ public class Character {
 
     public int getVelocityY() {
         return (int) currentYVelocity;
+    }
+
+    public boolean checkGameOver() {
+        if (y > GameView.screenY) {
+            return true;
+        }
+        return false;
     }
 }
