@@ -46,10 +46,6 @@ public class Character {
         }
     }
 
-    private boolean isOnPlatform() {
-        return false;
-    }
-
     public void setCanJump(boolean canJump) {
         this.canJump = canJump;
     }

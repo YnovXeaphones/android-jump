@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
@@ -12,8 +13,8 @@ import android.view.WindowManager;
 public class GameActivity extends AppCompatActivity {
     private GameView gameView;
 
-    public static Intent getIntent(MainActivity mainActivity) {
-        return new Intent(mainActivity, GameActivity.class);
+    public static Intent getIntent(Context context) {
+        return new Intent(context, GameActivity.class);
     }
 
     @Override
