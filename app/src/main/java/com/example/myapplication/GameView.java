@@ -21,6 +21,7 @@ import androidx.room.Room;
 
 import com.example.myapplication.Data.AppDatabase;
 import com.example.myapplication.Data.Score;
+import com.example.myapplication.Data.ScoreDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private static final String TAG = "GameView";
     public static final Boolean DEBUG = false;
+    private static final long TARGET_FRAME_TIME = 1000 / 120;
 
     private Context context;
     private Thread thread;
@@ -135,18 +137,23 @@ public class GameView extends SurfaceView implements Runnable {
         });
     }
 
-    private  void saveScore(SharedPreferences prefs, EditText usernameEditText, int score){
+    private void saveScore(SharedPreferences prefs, EditText usernameEditText, int score){
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("username", usernameEditText.getText().toString());
         editor.apply();
 
         AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "android-jump").build();
-        db.scoreDao().insertScore(new Score(
-                usernameEditText.getText().toString(),
-                score,
-                System.currentTimeMillis()
-        ));
+        ScoreDao scoreDao = db.scoreDao();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                scoreDao.insertScore(new Score(
+                        usernameEditText.getText().toString(),
+                        score,
+                        System.currentTimeMillis()));
+            }
+        }).start();
     }
 
     private void gameOverUpdate(int tick) {
@@ -260,7 +267,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void sleep() {
         try {
-            Thread.sleep(17);
+            Thread.sleep(TARGET_FRAME_TIME);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -291,5 +298,21 @@ public class GameView extends SurfaceView implements Runnable {
                 break;
         }
         return true;
+    }
+
+    private long lastFrameTime = 0;
+    private int frameCount = 0;
+
+    public double measureFrameRate() {
+        long currentTime = System.currentTimeMillis();
+        double fps = 0;
+        if (lastFrameTime != 0) {
+            long elapsedTime = currentTime - lastFrameTime;
+            fps = Math.round(1000f / elapsedTime);
+            Log.d("FrameRate", "FPS: " + fps);
+        }
+        lastFrameTime = currentTime;
+        frameCount++;
+        return fps;
     }
 }
