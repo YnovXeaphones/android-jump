@@ -5,9 +5,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,7 +37,8 @@ public class GameView extends SurfaceView implements Runnable {
     private Context context;
     private Thread thread;
     private boolean isPlaying;
-    private boolean gameOver = false;
+    private boolean isPaused;
+    private boolean gameOver;
     public static int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private Paint paint;
@@ -69,17 +72,19 @@ public class GameView extends SurfaceView implements Runnable {
         background = new Background(screenX, screenY, getResources());
 
         paint = new Paint();
+
+        isPlaying = true;
     }
 
     @Override
     public void run() {
-        while (isPlaying && !gameOver) {
+        while (isPlaying && !gameOver && !isPaused) {
             update();
             draw();
             sleep();
         }
         int tick = 0;
-        while (isPlaying && gameOver) {
+        while (isPlaying && gameOver && !isPaused) {
             gameOverUpdate(tick);
             draw();
             tick++;
@@ -91,7 +96,10 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void displayGameOverScreen() {
+        isPlaying = false;
+        gameOver = true;
         ((Activity) context).runOnUiThread(() -> {
+            ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             ((Activity) context).setContentView(R.layout.activity_game_over_screen);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
             int fadeDuration = 1000;
@@ -275,7 +283,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void pause() {
         try {
-            isPlaying = false;
+            isPaused = true;
             thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -283,7 +291,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void resume() {
-        isPlaying = true;
+        isPaused = false;
         thread = new Thread(this);
         thread.start();
     }
@@ -300,19 +308,18 @@ public class GameView extends SurfaceView implements Runnable {
         return true;
     }
 
-    private long lastFrameTime = 0;
-    private int frameCount = 0;
+    public Bundle saveState() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isPlaying", isPlaying);
+        bundle.putBoolean("gameOver", gameOver);
+        bundle.putInt("score", score);
 
-    public double measureFrameRate() {
-        long currentTime = System.currentTimeMillis();
-        double fps = 0;
-        if (lastFrameTime != 0) {
-            long elapsedTime = currentTime - lastFrameTime;
-            fps = Math.round(1000f / elapsedTime);
-            Log.d("FrameRate", "FPS: " + fps);
-        }
-        lastFrameTime = currentTime;
-        frameCount++;
-        return fps;
+        return bundle;
+    }
+
+    public void restoreState(Bundle savedInstanceState) {
+        score = savedInstanceState.getInt("score");
+        isPlaying = savedInstanceState.getBoolean("isPlaying");
+        gameOver = savedInstanceState.getBoolean("gameOver");
     }
 }

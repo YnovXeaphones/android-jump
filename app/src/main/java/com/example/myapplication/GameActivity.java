@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -32,7 +33,13 @@ public class GameActivity extends AppCompatActivity {
 
         gameView = new GameView(this, point.x, point.y);
 
+        if (savedInstanceState != null) {
+            gameView.restoreState(savedInstanceState);
+        }
+
         setContentView(gameView);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     @Override
@@ -65,5 +72,17 @@ public class GameActivity extends AppCompatActivity {
                         onResume();
                     }
                 }).show();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putAll(gameView.saveState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        gameView.restoreState(savedInstanceState);
     }
 }
