@@ -41,7 +41,7 @@ Cette page est un tableau de bord des performances :
 ![img_3.png](img_3.png)
 
 ## Conclusion
-**Android Jump** offre une expérience de jeu divertissante et accessible à tous les âges. La simplicité des contrôles et la complexité croissante du jeu en font un passe-temps idéal pour tous ceux qui cherchent un défi rapide et amusant.
+**Android Jump** offre une expérience de jeu divertissante et accessible à tous les âges. La simplicité des contrôles et la complexité évolutive en font un passe-temps idéal pour tous ceux qui cherchent un défi rapide et amusant.
 
 
 ### Lien du Trello
