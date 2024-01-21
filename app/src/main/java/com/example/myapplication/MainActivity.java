@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
         );
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     public void onImageClick(View view) {
@@ -34,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (view.getId() == R.id.score) {
             Intent intent = new Intent(this, ScoreboardActivity.class);
             startActivity(intent);
-        } else if (view.getId() == R.id.settings) {
-        Toast.makeText(this, "Setting in progress !", Toast.LENGTH_SHORT).show();
         }
     }
 }

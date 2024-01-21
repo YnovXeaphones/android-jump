@@ -18,6 +18,8 @@ public class Score {
     @ColumnInfo(name = "date")
     private Long date;
 
+
+    public  Score() {}
     public Score(String username, int score, Long date) {
         this.username = username;
         this.score = score;
@@ -42,5 +44,17 @@ public class Score {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setDate(Long date) {
+        this.date = date;
     }
 }
