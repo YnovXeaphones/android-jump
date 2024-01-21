@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.example.myapplication.Data.ScoreDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,6 +200,17 @@ public class GameView extends SurfaceView implements Runnable {
         });
 
         scores.getKey();
+        ScoreDao scoreDao = db.scoreDao();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                scoreDao.insertScore(new Score(
+                        usernameEditText.getText().toString(),
+                        score,
+                        System.currentTimeMillis()));
+            }
+        }).start();
     }
 
     private void gameOverUpdate(int tick) {
@@ -312,7 +324,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void sleep() {
         try {
-            Thread.sleep(TARGET_FRAME_TIME);
+            Thread.sleep(17);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

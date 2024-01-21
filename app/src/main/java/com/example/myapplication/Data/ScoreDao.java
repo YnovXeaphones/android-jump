@@ -15,6 +15,12 @@ public interface ScoreDao {
     @Query("SELECT * FROM score WHERE username = :username ORDER BY score DESC")
     List<Score> getScoresByUsername(String username);
 
+    @Query("SELECT * FROM score ORDER BY score DESC LIMIT 1")
+    Score getHighestScore();
+
+    @Query("SELECT * FROM score WHERE score < (SELECT MAX(score) FROM score) ORDER BY score DESC")
+    List<Score> getAllButHighestScore();
+
     @Insert
     void insertScore(Score score);
 
