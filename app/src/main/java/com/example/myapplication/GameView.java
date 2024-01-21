@@ -198,19 +198,6 @@ public class GameView extends SurfaceView implements Runnable {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-        scores.getKey();
-        ScoreDao scoreDao = db.scoreDao();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                scoreDao.insertScore(new Score(
-                        usernameEditText.getText().toString(),
-                        score,
-                        System.currentTimeMillis()));
-            }
-        }).start();
     }
 
     private void gameOverUpdate(int tick) {
