@@ -21,6 +21,7 @@ import androidx.room.Room;
 
 import com.example.myapplication.Data.AppDatabase;
 import com.example.myapplication.Data.Score;
+import com.example.myapplication.Data.ScoreDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,12 +142,17 @@ public class GameView extends SurfaceView implements Runnable {
         editor.apply();
 
         AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "android-jump").build();
-        db.scoreDao().insertScore(new Score(
-                usernameEditText.getText().toString(),
-                score,
-                System.currentTimeMillis()
-        ));
+        ScoreDao scoreDao = db.scoreDao();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                scoreDao.insertScore(new Score(
+                        usernameEditText.getText().toString(),
+                        score,
+                        System.currentTimeMillis()));
+            }
+        }).start();
     }
 
     private void gameOverUpdate(int tick) {

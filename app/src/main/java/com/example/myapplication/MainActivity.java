@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         } else if (view.getId() == R.id.score) {
-            Toast.makeText(this, "Score in progress !", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, ScoreboardActivity.class);
+            startActivity(intent);
         } else if (view.getId() == R.id.settings) {
         Toast.makeText(this, "Setting in progress !", Toast.LENGTH_SHORT).show();
         }
