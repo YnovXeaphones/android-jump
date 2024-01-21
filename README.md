@@ -10,6 +10,7 @@ La page d'accueil sert de point de départ pour le joueur. Elle offre les option
 - **Jouer** : Démarrer une nouvelle partie.
 - **Score**: Afficher les meilleurs scores des joueurs.
 
+![img_2.png](img_2.png)
 
 ### Page de jeu
 La mécanique du jeu est la suivante:
@@ -19,6 +20,7 @@ La mécanique du jeu est la suivante:
 - Pour se déplacer, le joueur touche la partie droite ou gauche de l'écran pour se diriger.
 - Le jeu se joue exclusivement en mode portrait pour empêcher la rotation de l'écran pendant le jeu.
 
+![img.png](img.png)
 
 ### Game Over et enregistrement des scores
 Lorsque le joueur tombe et que la partie se termine:
@@ -26,6 +28,7 @@ Lorsque le joueur tombe et que la partie se termine:
 - Le joueur est invité à entrer son nom pour enregistrer son score.
 - Le score, ainsi que le nom du joueur, sont enregistrés dans la base de données avec la date de la partie.
 
+![img_1.png](img_1.png)
 
 ### Page de scores
 Cette page est un tableau de bord des performances :
@@ -35,9 +38,14 @@ Cette page est un tableau de bord des performances :
 - Une flèche de retour en bas à gauche permet de revenir à la liste complète des scores.
 - La rotation de l'écran est autorisée sur cette page, permettant de visualiser les scores en mode paysage ou portrait.
 
+![img_3.png](img_3.png)
 
 ## Conclusion
 **Android Jump** offre une expérience de jeu divertissante et accessible à tous les âges. La simplicité des contrôles et la complexité croissante du jeu en font un passe-temps idéal pour tous ceux qui cherchent un défi rapide et amusant.
+
+
+### Lien du Trello
+https://trello.com/b/vo9uTERV/projet-mobile
 
 ---
 
