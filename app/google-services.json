@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "84958450600",
+    "firebase_url": "https://android-jump-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "android-jump",
+    "storage_bucket": "android-jump.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84958450600:android:18dc7d3fbbb8096121039d",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVk_gZxsaUeEDpP7J3Pjl-J5UTzwvorLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -19,11 +19,18 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 
 import com.example.myapplication.Data.AppDatabase;
 import com.example.myapplication.Data.Score;
 import com.example.myapplication.Data.ScoreDao;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +169,36 @@ public class GameView extends SurfaceView implements Runnable {
                         System.currentTimeMillis()));
             }
         }).start();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference scores = database.getReference("scores");
+
+        scores.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Assuming it's a list of strings
+                List<Score> currentList = dataSnapshot.getValue(new GenericTypeIndicator<List<Score>>() {});
+                if (currentList == null) {
+                    currentList = new ArrayList<>();
+                }
+
+                // Add new item to the list
+                currentList.add(new Score(
+                        usernameEditText.getText().toString(),
+                        score,
+                        System.currentTimeMillis()));
+
+                // Update the list in Firebase
+                scores.setValue(currentList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        scores.getKey();
     }
 
     private void gameOverUpdate(int tick) {
