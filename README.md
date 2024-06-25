@@ -1,5 +1,7 @@
 # Android Jump - README
 
+Ynov Toulouse B3
+
 ## Introduction
 **Android Jump** est un jeu mobile captivant où le but est de sauter de plate-forme en plate-forme en atteignant le plus haut possible. Ce jeu à défilement vertical met à l’épreuve la coordination et le timing des joueurs. Doté d’une interface intuitive, les joueurs tapent sur le côté gauche ou droit de l’écran pour déplacer le personnage en conséquence.
 
